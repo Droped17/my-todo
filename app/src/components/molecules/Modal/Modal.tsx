@@ -5,10 +5,25 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import React, { useRef, useState } from "react";
 import axios from "axios";
+import { db } from "@/app/src/utils/firebaseConfig";
+import { collection,addDoc } from "firebase/firestore";
+import { ModalType } from "@/type";
 
-type ModalType = {
-  isOpen: boolean;
-};
+
+const addDataToFireStore = async(title: unknown,detail:unknown) => {
+  try {
+    const docRef = await addDoc(collection(db,"messages"),{
+      title,
+      detail
+    });
+    console.log(`Docref`,docRef);
+    console.log(`Document id: `,docRef.id);
+    return true;
+  } catch (error) {
+    console.error(`Error adding document`,error);
+    return false;
+  }
+}
 
 export default function MyModal() {
   const [open, setOpen] = useState<ModalType>({ isOpen: false });
@@ -23,16 +38,21 @@ export default function MyModal() {
     detailRef: null,
   });
 
-  const postData = () => {
+  const postData = async() => {
     const formData = {
       title: inputRefs.current.titleRef?.value,
       details: inputRefs.current.detailRef?.value,
     };
 
-    axios
-      .post("http://localhost:3000/api/todo", formData)
-      .then((res) => console.log(res))
-      .catch((e) => console.error(e));
+    const added = await addDataToFireStore(formData.title,formData.details);
+    if (added) {
+      alert("Add Success");
+    }
+
+    // axios
+    //   .post("http://localhost:3000/api/todo", formData)
+    //   .then((res) => console.log(res))
+    //   .catch((e) => console.error(e));
   };
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {

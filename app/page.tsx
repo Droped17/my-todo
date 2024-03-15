@@ -1,6 +1,5 @@
 import axios from "axios";
 import MyModal from "./src/components/molecules/Modal/Modal";
-import { Button } from "@mui/material";
 import HomePageCard from "./src/components/molecules/Card/HomePageCard";
 import { Post } from "@/type";
 
