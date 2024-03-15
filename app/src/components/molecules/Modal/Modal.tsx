@@ -1,17 +1,17 @@
 "use client";
 
 import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import React, { useRef, useState } from "react";
+import axios from "axios";
 
 type ModalType = {
-    isOpen: boolean
-  };
+  isOpen: boolean;
+};
 
 export default function MyModal() {
-    const [open, setOpen] = useState<ModalType>({ isOpen: false });
+  const [open, setOpen] = useState<ModalType>({ isOpen: false });
   const handleOpen = () => setOpen({ isOpen: true });
   const handleClose = () => setOpen({ isOpen: false });
 
@@ -23,12 +23,25 @@ export default function MyModal() {
     detailRef: null,
   });
 
+  const postData = () => {
+    const formData = {
+      title: inputRefs.current.titleRef?.value,
+      details: inputRefs.current.detailRef?.value,
+    };
+
+    axios
+      .post("http://localhost:3000/api/todo", formData)
+      .then((res) => console.log(res))
+      .catch((e) => console.error(e));
+  };
+
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log("click");
     console.log(inputRefs.current.titleRef?.value);
     console.log(inputRefs.current.detailRef?.value);
+    postData();
   };
+
   return (
     <div>
       <Button onClick={handleOpen}>Todo</Button>
@@ -51,7 +64,9 @@ export default function MyModal() {
             variant="standard"
             inputRef={(ref) => (inputRefs.current.detailRef = ref)}
           />
-          <Button variant="contained" onClick={handleClick}>Add</Button>
+          <Button variant="contained" onClick={handleClick}>
+            Add
+          </Button>
         </div>
       </Modal>
     </div>
